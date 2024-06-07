@@ -11,11 +11,15 @@ body {
 
 section {
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
-    flex-direction: column;
     min-height: 100vh;
     padding: 20px;
+    background-color: #ffffff;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    margin: 0 20px;
 }
 
 h1 {
@@ -31,7 +35,7 @@ h1 {
     width: 100%;
     max-width: 400px;
     padding: 20px;
-    background-color: #fff;
+    background-color: #e9ecef;
     border-radius: 10px;
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
 }
@@ -61,10 +65,16 @@ button[type="submit"]:hover {
     background-color: #0056b3;
 }
 
+h4 {
+    color: #666;
+    margin: 20px 0;
+}
+
 ul {
     list-style: none;
     padding: 0;
     width: 100%;
+    max-width: 400px;
 }
 
 li {
@@ -104,6 +114,7 @@ li button:hover {
     text-decoration: line-through;
     color: #6c757d;
 }
+
 
 
 @media (max-width: 400px) {
