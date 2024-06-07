@@ -106,7 +106,7 @@ function loadTasks() {
         taskElement.dataset.id = task.id;
         taskElement.innerHTML = `
             <input type="checkbox" ${task.completed ? 'checked' : ''}>
-            <p>${task.name}</p>
+            <p class="${task.completed ? 'done' : ''}">${task.name}</p>
             <button type="button">X</button>
         `;
 
