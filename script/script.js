@@ -1,5 +1,5 @@
 const form = document.getElementById('form');
-const taskInput = document.getElementById('taskAdded'); // Corrected ID
+const taskInput = document.getElementById('taskAdded'); 
 const tasks = document.getElementById('tasks');
 
 document.addEventListener('DOMContentLoaded', loadTasks);
@@ -27,17 +27,25 @@ function addTask(e) {
         return;
     }
 
-    const task = document.createElement('li');
-    task.innerHTML = `
+    const task = {
+        id: Date.now(),
+        name: taskInput.value,
+        createdDate: new Date().toISOString(),
+        completed: false
+    };
+
+    const taskElement = document.createElement('li');
+    taskElement.dataset.id = task.id;
+    taskElement.innerHTML = `
         <input type="checkbox">
-        <p>${taskInput.value}</p>
+        <p>${task.name}</p>
         <button type="button">X</button>
     `;
 
-    task.querySelector('input[type="checkbox"]').addEventListener('change', toggleDone);
-    task.querySelector('button').addEventListener('click', removeTask);
+    taskElement.querySelector('input[type="checkbox"]').addEventListener('change', toggleDone);
+    taskElement.querySelector('button').addEventListener('click', removeTask);
 
-    tasks.appendChild(task);
+    tasks.appendChild(taskElement);
     taskInput.value = '';
 
     taskTLS();
@@ -45,45 +53,66 @@ function addTask(e) {
 }
 
 function toggleDone(e) {
-    const task = e.target.parentNode;
-    task.querySelector('p').classList.toggle('done'); // Fixed typo
+    const taskElement = e.target.parentNode;
+    const taskId = taskElement.dataset.id;
+    const taskList = getTasks();
 
-    taskTLS();
+    const task = taskList.find(task => task.id == taskId);
+    task.completed = e.target.checked;
+
+    taskElement.querySelector('p').classList.toggle('done', task.completed);
+    saveTasks(taskList);
 }
 
 function removeTask(e) {
-    const task = e.target.parentNode;
-    tasks.removeChild(task);
+    const taskElement = e.target.parentNode;
+    const taskId = taskElement.dataset.id;
+    const taskList = getTasks();
 
-    taskTLS();
+    const updatedTaskList = taskList.filter(task => task.id != taskId);
+    tasks.removeChild(taskElement);
+
+    saveTasks(updatedTaskList);
 }
 
 function taskTLS() {
-    const taskList = Array.from(tasks.children);
-    const taskTexts = taskList.map(task => task.querySelector('p').innerText);
-    localStorage.setItem('tasks', JSON.stringify(taskTexts));
+    const taskList = Array.from(tasks.children).map(taskElement => {
+        return {
+            id: taskElement.dataset.id,
+            name: taskElement.querySelector('p').innerText,
+            createdDate: new Date().toISOString(),
+            completed: taskElement.querySelector('input[type="checkbox"]').checked
+        };
+    });
+    saveTasks(taskList);
+}
+
+function saveTasks(taskList) {
+    localStorage.setItem('tasks', JSON.stringify(taskList));
+}
+
+function getTasks() {
+    const storedTasks = localStorage.getItem('tasks');
+    return storedTasks ? JSON.parse(storedTasks) : [];
 }
 
 function loadTasks() {
-    const storedTasks = localStorage.getItem('tasks');
+    const storedTasks = getTasks();
 
-    if (storedTasks) {
-        const taskTexts = JSON.parse(storedTasks);
+    tasks.innerHTML = '';
 
-        tasks.innerHTML = '';
+    storedTasks.forEach(task => {
+        const taskElement = document.createElement('li');
+        taskElement.dataset.id = task.id;
+        taskElement.innerHTML = `
+            <input type="checkbox" ${task.completed ? 'checked' : ''}>
+            <p>${task.name}</p>
+            <button type="button">X</button>
+        `;
 
-        taskTexts.forEach(taskText => {
-            const task = document.createElement('li');
-            task.innerHTML = `
-                <input type="checkbox">
-                <p>${taskText}</p>
-                <button type="button">X</button>
-            `;
+        taskElement.querySelector('input[type="checkbox"]').addEventListener('change', toggleDone);
+        taskElement.querySelector('button').addEventListener('click', removeTask);
 
-            task.querySelector('input[type="checkbox"]').addEventListener('change', toggleDone);
-            task.querySelector('button').addEventListener('click', removeTask);
-
-            tasks.appendChild(task);
-        });
-    }
+        tasks.appendChild(taskElement);
+    });
 }
