@@ -1,5 +1,5 @@
 const form = document.getElementById('form');
-const taskInput = document.getElementById('task');
+const taskInput = document.getElementById('taskAdded'); // Corrected ID
 const tasks = document.getElementById('tasks');
 
 document.addEventListener('DOMContentLoaded', loadTasks);
@@ -14,60 +14,52 @@ function sortTasks() {
     });
     tasks.innerHTML = '';
 
-    // Append the sorted task elements
     sorted.forEach(task => {
         tasks.appendChild(task);
     });
 
-    // Save the sorted tasks to local storage
     taskTLS();
 }
-//Add a new task
+
 function addTask(e) {
     e.preventDefault();
-    if(taskInput.value == '')
-    {
+    if (taskInput.value.trim() === '') {
         return;
     }
 
     const task = document.createElement('li');
     task.innerHTML = `
-            <input type="checkbox">
-            <p>${taskInput.value}</p>
-            <button type="buttton">X</button>
-            `;
+        <input type="checkbox">
+        <p>${taskInput.value}</p>
+        <button type="button">X</button>
+    `;
 
-            task.querySelector('input[type="checkbox"]').addEventListener('change', toggleDone);
+    task.querySelector('input[type="checkbox"]').addEventListener('change', toggleDone);
+    task.querySelector('button').addEventListener('click', removeTask);
 
-            task.querySelector('button').addEventListener('click', removeTask);
-
-            tasks.appendChild(task);
-            taskInput.value = '';
-
-            taskTLS();
-
-            sortTasks()
-}
-
-function toggleDone(e){
-    const task = e.target.parentNode;
-    task.querySelector('p').classLit.toggle('done');
+    tasks.appendChild(task);
+    taskInput.value = '';
 
     taskTLS();
-
+    sortTasks();
 }
 
-function removeTask(e){
+function toggleDone(e) {
+    const task = e.target.parentNode;
+    task.querySelector('p').classList.toggle('done'); // Fixed typo
+
+    taskTLS();
+}
+
+function removeTask(e) {
     const task = e.target.parentNode;
     tasks.removeChild(task);
 
     taskTLS();
-
 }
 
 function taskTLS() {
     const taskList = Array.from(tasks.children);
-
     const taskTexts = taskList.map(task => task.querySelector('p').innerText);
     localStorage.setItem('tasks', JSON.stringify(taskTexts));
 }
@@ -85,7 +77,7 @@ function loadTasks() {
             task.innerHTML = `
                 <input type="checkbox">
                 <p>${taskText}</p>
-                <button type="button">Delete</button>
+                <button type="button">X</button>
             `;
 
             task.querySelector('input[type="checkbox"]').addEventListener('change', toggleDone);
