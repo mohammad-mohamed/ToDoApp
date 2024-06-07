@@ -24,7 +24,7 @@ h1 {
     margin-bottom: 20px;
 }
 
-form {
+#form {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -103,4 +103,19 @@ li button:hover {
 .done {
     text-decoration: line-through;
     color: #6c757d;
+}
+
+
+@media (max-width: 400px) {
+    #enter{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-bottom: 15px;
+        height: 250px;
+        width: 300px;
+        border-radius: 50px;
+        background: linear-gradient(145deg,whitesmoke,rgb(4, 120, 4));
+        box-shadow: 20px 20px 60px rgb(4, 120, 4),-20px -20px 60px whitesmoke;
+    }
 }
